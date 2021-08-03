@@ -12,7 +12,7 @@ async function main() {
     const [owner, repo] = core.getInput("repo", { required: true }).split("/");
     const path = core.getInput("path", { required: true });
     const name = core.getInput("name");
-    let workflowConclusion = 'success';
+    let workflowConclusion = "";
     let pr = core.getInput("pr");
     let commit = core.getInput("commit");
     let branch = core.getInput("branch");
@@ -68,10 +68,13 @@ async function main() {
           status: workflowConclusion,
         }
       )) {
-        console.log("runs: ", runs);
         const run = runs.data.find((r) => {
           if (commit) {
-            return r.head_sha == commit;
+            return (
+              r.head_sha == commit &&
+              r.status === "completed" &&
+              r.conclusion === "success"
+            );
           }
           if (runNumber) {
             return r.run_number == runNumber;
@@ -87,7 +90,6 @@ async function main() {
     }
 
     console.log("==> RunID:", runID);
-    
 
     let artifacts = await client.paginate(
       client.rest.actions.listWorkflowRunArtifacts,
