@@ -99,6 +99,7 @@ async function main() {
         run_id: runID,
       }
     );
+    console.log("artifacts: ", artifacts);
 
     // One artifact or all if `name` input is not specified.
     if (name) {
